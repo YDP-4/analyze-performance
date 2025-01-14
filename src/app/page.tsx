@@ -15,7 +15,10 @@ export default function Page() {
           <div className="text-sm">Please enter the URL below</div>
           <Input className="w-96 h-14" />
         </div>
-        <Button size={'lg'} className="w-96">
+        <Button
+          size={'lg'}
+          className="w-96 bg-pf-purple text-pf-white  border-2 hover:bg-pf-purple hover:bg-opacity-70 tracking-wider text-base py-5"
+        >
           Analyze
         </Button>
       </div>

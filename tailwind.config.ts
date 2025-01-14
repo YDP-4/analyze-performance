@@ -10,6 +10,7 @@ export default {
   theme: {
     extend: {
       colors: {
+        // shadcn 기본 색상
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
@@ -49,6 +50,16 @@ export default {
           '3': 'hsl(var(--chart-3))',
           '4': 'hsl(var(--chart-4))',
           '5': 'hsl(var(--chart-5))',
+        },
+        // 커스텀 컬러
+        pf: {
+          purple: '#4F03AD',
+          lightgray: '#ACA9BB',
+          gray: '#474554',
+          navy: '#111E67',
+          red: '#FB0000',
+          green: '#009400',
+          white: '#F2ECFF',
         },
       },
       borderRadius: {
