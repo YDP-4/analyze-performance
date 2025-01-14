@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/select'
 export default function CardWithForm() {
   return (
-    <Card className="w-[350px]">
+    <Card className="w-[350px] m-20">
       <CardHeader>
         <CardTitle>Create project</CardTitle>
         <CardDescription>Deploy your new project in one-click.</CardDescription>
@@ -50,7 +50,7 @@ export default function CardWithForm() {
         </form>
       </CardContent>
       <CardFooter className="flex justify-between">
-        <Button variant="outline">Cancel</Button>
+        <Button variant="outline" className='bg-pf-purple hover:bg-pf-purple hover:bg-opacity-70'>Cancel</Button>
         <Button>Deploy</Button>
       </CardFooter>
 
