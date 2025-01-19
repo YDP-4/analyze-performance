@@ -12,7 +12,7 @@ export default function Tabs({ tabList }: { tabList: ITabsProps[] }) {
         {tabList.map((v) => (
           <div
             key={v.idx}
-            className={`px-14 py-1   cursor-pointer  ${v.idx === selected.idx ? 'bg-pf-darknavy font-semibold' : 'bg-pf-gray hover:bg-pf-darknavy hover:bg-opacity-60'} rounded-md m-1` }
+            className={`flex-1 py-1 text-center cursor-pointer  ${v.idx === selected.idx ? 'bg-pf-darknavy font-semibold' : 'bg-pf-gray hover:bg-pf-darknavy hover:bg-opacity-60'} rounded-md m-1`}
             onClick={() => {
               setSelected(v)
             }}
@@ -21,7 +21,9 @@ export default function Tabs({ tabList }: { tabList: ITabsProps[] }) {
           </div>
         ))}
       </div>
-      <div className=" px-5 py-7 border border-pf-gray rounded-md mt-2">{selected.content}</div>
+      <div className=" px-5 py-7 border border-pf-gray rounded-md mt-2">
+        {selected.content}
+      </div>
     </>
   )
 }
