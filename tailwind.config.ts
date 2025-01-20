@@ -55,11 +55,12 @@ export default {
         pf: {
           purple: '#4F03AD',
           lightgray: '#ACA9BB',
-          gray: '#474554',
-          navy: '#111E67',
+          gray: '#28262e',
+          navy: '#020e4f',
           red: '#FB0000',
           green: '#009400',
           white: '#F2ECFF',
+          darknavy: '#02031d',
         },
       },
       borderRadius: {

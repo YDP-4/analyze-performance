@@ -6,7 +6,7 @@ export default function Page() {
   return (
     <div className="flex flex-col items-center min-h-screen py-20">
       <div className="flex flex-col items-center gap-2 mt-8">
-        <Image alt="로고" src="/logo.png" height={70} width={70} />
+        <Image alt="logo" src="/logo.png" height={70} width={70} />
         <h1 className="text-3xl font-bold">Performance For You</h1>
       </div>
 
