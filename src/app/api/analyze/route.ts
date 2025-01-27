@@ -1,0 +1,55 @@
+import { NextRequest, NextResponse } from "next/server";
+import { launch } from "puppeteer";
+import { generateDomGraph } from "./generateDomGraph";
+import { AnalyzeResult } from "@/app/types";
+
+
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const encodedUrl = searchParams.get("url");
+
+  if (!encodedUrl) {
+    return NextResponse.json(
+      { error: "Missing required parameter: url" },
+      { status: 400 }
+    );
+  }
+
+  const decodedUrl = decodeURIComponent(encodedUrl);
+
+  try {
+    new URL(decodedUrl);
+  } catch {
+    return NextResponse.json({ error: "Invalid URL format" }, { status: 400 });
+  }
+
+  try {
+    const results = await analyzeAll(decodedUrl);
+    return NextResponse.json(results, { status: 200 });
+  } catch (error) {
+    console.error("Failed to analyze URL:", error);
+    return NextResponse.json({ error: "Failed to analyze URL" }, { status: 500 });
+  }
+}
+
+async function analyzeAll(url: string) : Promise<AnalyzeResult> {
+  const browser = await launch({
+    headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox", "--user-data-dir=/tmp/puppeteer-profile"],
+  });
+
+  try {
+    const domGraphPromise = generateDomGraph(browser, url);
+
+
+    const [domGraph] = await Promise.all([
+      domGraphPromise,
+    ]);
+
+    return {
+      domGraph
+    };
+  } finally {
+    await browser.close();
+  }
+}
