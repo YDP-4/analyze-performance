@@ -31,3 +31,23 @@ export interface NavigationTiming {
   loadEventStart: number;
   loadEventEnd: number;
 }
+
+export type TimingDataSubset = Pick<
+  NavigationTiming,
+  | 'domainLookupStart'
+  | 'domainLookupEnd'
+  | 'connectStart'
+  | 'connectEnd'
+  | 'requestStart'
+  | 'responseStart'
+  | 'responseEnd'
+  | 'domInteractive'
+  | 'domContentLoadedEventEnd'
+  | 'loadEventEnd'
+>;
+
+export interface EventData {
+  label: string;
+  start: number;
+  end: number;
+}
