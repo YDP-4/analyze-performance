@@ -11,16 +11,26 @@ export default function Page() {
       </div>
 
       <div className="flex-1 flex flex-col justify-center max-h-[600px] gap-8 sm:gap-12 lg:gap-16">
-        <div className="flex flex-col gap-4">
-          <div className="text-sm">Please enter the URL below</div>
-          <Input className="w-96 h-14" />
-        </div>
-        <Button
-          size={'lg'}
-          className="w-96 bg-pf-purple text-pf-white  border-2 hover:bg-pf-purple hover:bg-opacity-70 tracking-wider text-base py-5"
+        <form
+          method="GET"
+          action="/result"
+          className="flex flex-col gap-4"
         >
-          Analyze
-        </Button>
+          <div className="text-sm">Please enter the URL below</div>
+          <Input
+            name="url"
+            className="w-96 h-14"
+            placeholder="https://example.com"
+            required
+          />
+          <Button
+            size="lg"
+            type="submit"
+            className="w-96 bg-pf-purple text-pf-white border-2 hover:bg-pf-purple hover:bg-opacity-70 tracking-wider text-base py-5"
+          >
+            Analyze
+          </Button>
+        </form>
       </div>
     </div>
   )
