@@ -89,7 +89,15 @@ export default function DomGraph({ data }: DomGraphProps) {
     const nodes = rootRef.current.descendants();
     const links = rootRef.current.links();
 
-    nodes.forEach((d) => (d.y = d.depth * 180));
+    const treeLayout = d3.tree<DomNode>().nodeSize([80, 30]);
+    treeLayout(rootRef.current);
+
+    rootRef.current.descendants().forEach((d) => {
+      d.y = d.depth * 180; 
+    });
+
+    updateSvgWidth(); 
+    updateSvgHeight();
 
     const nodeSelection = g.selectAll<SVGGElement, d3.HierarchyPointNode<DomNode>>('g.node');
     const linkSelection = g.selectAll<SVGPathElement, d3.HierarchyPointLink<DomNode>>('path.link');
