@@ -8,6 +8,7 @@ import DomGraph from './components/DomGraph'
 import { AnalyzeResult } from '../types'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import PageLoadGraph from './components/PageLoadGraph'
 
 async function getData(url: string): Promise<AnalyzeResult> {
   if (!url || !url.startsWith('http')) {
@@ -60,7 +61,7 @@ export default function Page() {
       content: <DomGraph data={data.domGraph} />,
     },
     { idx: 2, name: 'Best Practices', content: <div>컴포넌트2</div> },
-    { idx: 3, name: 'Loading', content: <div>컴포넌트3</div> },
+    { idx: 3, name: 'Loading', content: <PageLoadGraph timingData={data.navigationTiming} /> },
   ]
 
   return (

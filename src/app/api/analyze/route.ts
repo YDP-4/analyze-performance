@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { launch } from "puppeteer";
 import { generateDomGraph } from "./generateDomGraph";
 import { AnalyzeResult } from "@/app/types";
+import { getNavigationTiming } from "./getNavigationTiming";
 
 
 export async function GET(req: NextRequest) {
@@ -40,14 +41,17 @@ async function analyzeAll(url: string) : Promise<AnalyzeResult> {
 
   try {
     const domGraphPromise = generateDomGraph(browser, url);
+    const navigationTimingPromise = getNavigationTiming(browser, url);
 
 
-    const [domGraph] = await Promise.all([
+    const [domGraph, navigationTiming] = await Promise.all([
       domGraphPromise,
+      navigationTimingPromise
     ]);
 
     return {
-      domGraph
+      domGraph,
+      navigationTiming
     };
   } finally {
     await browser.close();
