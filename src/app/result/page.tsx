@@ -1,31 +1,63 @@
+'use client'
+
 import Tabs from '@/components/tabs'
 import { ITabsProps } from '@/components/tabs/type'
-import { Card, CardContent } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@radix-ui/react-label'
+import { fetcher } from '@/lib/fetcher'
 import Image from 'next/image'
+import DomGraph from './components/DomGraph'
+import { AnalyzeResult } from '../types'
+import { useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
+
+async function getData(url: string): Promise<AnalyzeResult> {
+  if (!url || !url.startsWith('http')) {
+    throw new Error('Invalid URL provided.')
+  }
+
+  const encodedUrl = encodeURIComponent(url);
+  const response = await fetcher(`http://localhost:3000/api/analyze?url=${encodedUrl}`)
+  return response
+}
 
 export default function Page() {
+  const params = useSearchParams()
+  const url = params.get('url')
+
+  const [data, setData] = useState<AnalyzeResult | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!url) {
+      setError('No URL provided')
+      return
+    }
+
+    const fetchData = async () => {
+      try {
+        const result = await getData(url)
+        setData(result)
+      } catch (err) {
+        setError('Failed to fetch data')
+        console.error(err)
+      }
+    }
+
+    fetchData()
+  }, [url])
+
+  if (error) {
+    return <div className="text-center mt-10">{error}</div>
+  }
+
+  if (!data) {
+    return <div className="text-center mt-10">Loading...</div>
+  }
+
   const mockList: ITabsProps[] = [
     {
       idx: 1,
       name: 'DOM Node',
-      content: (
-        <div>
-          <Card className="p-4">
-            <CardContent>
-              <form>
-                <div className="grid w-full items-center gap-4">
-                  <div className="flex flex-col space-y-1.5">
-                    <Label htmlFor="name">Name</Label>
-                    <Input id="name" placeholder="Name of your project" />
-                  </div>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
-        </div>
-      ),
+      content: <DomGraph data={data.domGraph} />,
     },
     { idx: 2, name: 'Best Practices', content: <div>컴포넌트2</div> },
     { idx: 3, name: 'Loading', content: <div>컴포넌트3</div> },
