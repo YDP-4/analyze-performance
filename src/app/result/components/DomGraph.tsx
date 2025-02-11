@@ -184,12 +184,23 @@ export default function DomGraph({ data }: DomGraphProps) {
     });
   };
 
-  const diagonal = (s: { x: number; y: number }, d: { x: number; y: number }) => `
-    M ${s.x} ${s.y}
-    C ${(s.x + d.x) / 2} ${s.y},
-      ${(s.x + d.x) / 2} ${d.y},
-      ${d.x} ${d.y}
-  `;
+  const diagonal = (s: { x: number; y: number }, d: { x: number; y: number }) => {
+    const nodeHeight = 30;
+
+    const startX = s.x;
+    const startY = s.y + nodeHeight / 2;
+
+    const endX = d.x;
+    const endY = d.y - nodeHeight / 2;
+
+    return `
+      M ${startX} ${startY}
+      C ${(startX + endX) / 2} ${startY},
+        ${(startX + endX) / 2} ${endY},
+        ${endX} ${endY}
+    `;
+  };
+
 
   return (
     <div>
