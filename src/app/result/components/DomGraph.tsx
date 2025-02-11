@@ -1,7 +1,7 @@
 'use client'
 
 import { DomNode } from "@/app/types";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as d3 from 'd3';
 
 declare module 'd3' {
@@ -18,7 +18,10 @@ type DomGraphProps = {
 
 export default function DomGraph({ data }: DomGraphProps) {
   const svgRef = useRef<SVGSVGElement>(null);
+  const gRef = useRef<SVGGElement>(null);
   const rootRef = useRef<d3.HierarchyPointNode<DomNode>>(null);
+  const [svgWidth, setSvgWidth] = useState(1000);
+  const [svgHeight, setSvgHeight] = useState(1000);
 
   useEffect(() => {
     if (!svgRef.current || !data) return;
@@ -33,15 +36,49 @@ export default function DomGraph({ data }: DomGraphProps) {
       child.children = undefined;
     });
 
+    treeLayout(root);
+
+    root.descendants().forEach((d) => {
+      d.y = d.depth * 180;
+    });
+
+    updateSvgWidth();
+    updateSvgHeight();
+
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
 
-    const g = svg.append('g').attr('transform', 'translate(100,50)');
-    rootRef.current = root;
-    treeLayout(root);
+
+    const initialX = svgWidth / 2;
+    const initialY = 50;
+
+    const g = svg.append('g').attr('transform', `translate(${initialX}, ${initialY})`);
+    gRef.current = g.node()!;
+
+    const zoom = d3.zoom<SVGSVGElement, unknown>()
+      .scaleExtent([0.1, 3])
+      .on('zoom', (event) => {
+        d3.select(gRef.current).attr('transform', event.transform.toString());
+      });
+
+    svg.call(zoom);
+    svg.call(zoom.transform, d3.zoomIdentity.translate(initialX, initialY).scale(1));
 
     update(root, g);
   }, [data]);
+
+  const updateSvgHeight = () => {
+    if (!rootRef.current) return;
+    const maxDepth = d3.max(rootRef.current.descendants(), (d) => d.depth) || 0;
+    setSvgHeight((maxDepth + 1) * 180 + 200); // Y 간격(180) * 최대 깊이 + 여백
+  };
+
+
+  const updateSvgWidth = () => {
+    if (!rootRef.current) return;
+    const maxX = d3.max(rootRef.current.descendants(), d => d.x) || 1000;
+    setSvgWidth(Math.max(maxX, 1200));
+  };
 
   const update = (
     source: d3.HierarchyPointNode<DomNode>,
@@ -148,7 +185,7 @@ export default function DomGraph({ data }: DomGraphProps) {
   return (
     <div>
       <h1>DOM Tree Visualizer</h1>
-      <svg ref={svgRef} width={8000} height={6000} />
+      <svg ref={svgRef} width={svgWidth} height={svgHeight} />
     </div>
   );
 }
