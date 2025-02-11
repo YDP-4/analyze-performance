@@ -23,10 +23,16 @@ export default function DomGraph({ data }: DomGraphProps) {
   useEffect(() => {
     if (!svgRef.current || !data) return;
 
-    const width = 800;
-    const height = 6000;
-    const treeLayout = d3.tree<DomNode>().size([width, height - 100]);
+    const treeLayout = d3.tree<DomNode>().nodeSize([80, 30]);
+
     const root = d3.hierarchy(data) as d3.HierarchyPointNode<DomNode>;
+    rootRef.current = root;
+
+    root.children?.forEach((child) => {
+      child._children = child.children;
+      child.children = undefined;
+    });
+
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
 
