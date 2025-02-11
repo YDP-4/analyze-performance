@@ -112,21 +112,30 @@ export default function DomGraph({ data }: DomGraphProps) {
         update(d, g);
       });
 
+    const nodeWidth = 80;
+    const nodeHeight = 30;
+
     nodeEnter
-      .append('circle')
-      .attr('r', 10)
-      .style('fill', (d) => (d._children ? 'lightsteelblue' : '#32CD32'))
+      .append('rect')
+      .attr('width', nodeWidth)
+      .attr('height', nodeHeight)
+      .attr('x', -nodeWidth / 2)
+      .attr('y', -nodeHeight / 2)
+      .style('fill', '#32CD32')
       .style('stroke', '#000')
-      .style('stroke-width', 2);
+      .style('stroke-width', 2)
+      .style('rx', 5)
+
 
     nodeEnter
       .append('text')
       .attr('dy', '.35em')
-      .attr('x', (d) => (d.children || d._children ? -13 : 13))
-      .attr('text-anchor', (d) => (d.children || d._children ? 'end' : 'start'))
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('text-anchor', 'middle')
       .text((d) => d.data.tag)
       .style('fill', '#1E90FF')
-      .style('font-weight', 'bold');
+      .style('font-weight', 'bold')
 
     const nodeUpdate = nodeEnter.merge(node);
 
