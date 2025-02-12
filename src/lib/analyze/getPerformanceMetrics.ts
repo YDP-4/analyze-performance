@@ -18,11 +18,6 @@ export async function getPerformanceMetrics(browser: Browser, url: string): Prom
         await page.goto(url, { waitUntil: "networkidle2" });
 
         /**
-         * DOM 내 전체 노드 수를 계산하여 성능 지표로 활용
-         */
-        const nodeCount = await page.evaluate(() => document.querySelectorAll("*").length);
-
-        /**
          * Chrome DevTools Protocol(CDP)을 이용하여 성능 데이터 수집 활성화
          */
         await client.send("Performance.enable");
