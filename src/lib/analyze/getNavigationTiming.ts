@@ -1,3 +1,5 @@
+"use server";
+
 import { NavigationTiming } from "@/app/types";
 import { Browser } from "puppeteer";
 

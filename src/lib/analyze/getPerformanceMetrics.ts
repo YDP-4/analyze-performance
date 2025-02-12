@@ -1,5 +1,7 @@
+"use server";
+
 import { PerformanceMetrics } from "@/app/types";
-import puppeteer, { Browser } from "puppeteer";
+import { Browser } from "puppeteer";
 
 export async function getPerformanceMetrics(browser: Browser, url: string): Promise<PerformanceMetrics> {
     const page = await browser.newPage();

@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { launch } from "puppeteer";
-import { generateDomGraph } from "./generateDomGraph";
 import { AnalyzeResult } from "@/app/types";
-import { getNavigationTiming } from "./getNavigationTiming";
-import { getPerformanceMetrics } from "./getPerformanceMetrics";
+import { generateDomGraph } from "@/lib/analyze/generateDomGraph";
+import { getNavigationTiming } from "@/lib/analyze/getNavigationTiming";
+import { getPerformanceMetrics } from "@/lib/analyze/getPerformanceMetrics";
 
 
 export async function GET(req: NextRequest) {

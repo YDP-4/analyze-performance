@@ -1,3 +1,5 @@
+"use server";
+
 import { DomNode } from "@/app/types";
 import { Browser } from "puppeteer";
 
