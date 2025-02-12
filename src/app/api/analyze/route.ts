@@ -3,6 +3,7 @@ import { launch } from "puppeteer";
 import { generateDomGraph } from "./generateDomGraph";
 import { AnalyzeResult } from "@/app/types";
 import { getNavigationTiming } from "./getNavigationTiming";
+import { getPerformanceMetrics } from "./getPerformanceMetrics";
 
 
 export async function GET(req: NextRequest) {
@@ -42,16 +43,19 @@ async function analyzeAll(url: string) : Promise<AnalyzeResult> {
   try {
     const domGraphPromise = generateDomGraph(browser, url);
     const navigationTimingPromise = getNavigationTiming(browser, url);
+    const performanceMetricsPromise = getPerformanceMetrics(browser, url);
 
 
-    const [domGraph, navigationTiming] = await Promise.all([
+    const [domGraph, navigationTiming, performanceMetrics] = await Promise.all([
       domGraphPromise,
-      navigationTimingPromise
+      navigationTimingPromise,
+      performanceMetricsPromise
     ]);
 
     return {
       domGraph,
-      navigationTiming
+      navigationTiming,
+      performanceMetrics
     };
   } finally {
     await browser.close();

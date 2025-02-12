@@ -1,6 +1,7 @@
 export interface AnalyzeResult {
   domGraph: DomNode;
   navigationTiming: NavigationTiming;
+  performanceMetrics: PerformanceMetrics;
 }
 
 export type DomNode = {
@@ -50,4 +51,14 @@ export interface EventData {
   label: string;
   start: number;
   end: number;
+}
+
+export interface PerformanceMetrics {
+  fmp: number;
+  dcl: number;
+  layoutCount: number;
+  recalcStyleCount: number;
+  scriptExecutionTime: number;
+  resourceCount: number;
+  jsHeapUsedSize: number;
 }
