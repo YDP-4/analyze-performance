@@ -39,6 +39,10 @@ export default function DomGraph({ data }: DomGraphProps) {
     renderTree(root);
   }, [data]);
 
+  /**
+   * 루트 노드의 직계 자식까지만 보이도록 설정하는 함수  
+   * (하위 노드는 `_children`으로 저장하고 기본적으로 접힘)
+   */
   const collapseChildren = (root: d3.HierarchyPointNode<DomNode>) => {
     root.children?.forEach((child) => {
       child._children = child.children;
@@ -46,22 +50,39 @@ export default function DomGraph({ data }: DomGraphProps) {
     });
   };
 
+  /**
+   * 노드의 깊이를 기준으로 Y 좌표를 설정하는 함수  
+   * (노드 간 Y 간격을 180으로 설정)
+   */
   const adjustNodePositions = (root: d3.HierarchyPointNode<DomNode>) => {
     root.descendants().forEach((d) => {
       d.y = d.depth * 180;
     });
   };
 
+  /**
+   * 트리의 최대 깊이 및 X 좌표를 계산하여 SVG 크기를 동적으로 조정하는 함수  
+   */
   const updateSvgSize = () => {
     if (!rootRef.current) return;
+
     const maxDepth = d3.max(rootRef.current.descendants(), (d) => d.depth) || 0;
     setSvgHeight((maxDepth + 1) * 180 + 200);
+
     const maxX = d3.max(rootRef.current.descendants(), (d) => d.x) || 1000;
     setSvgWidth(Math.max(maxX, 1200));
   };
 
+  /**
+   * 트리 구조를 SVG에 렌더링하는 함수  
+   * - 기존 SVG 내용을 초기화  
+   * - SVG 그룹 요소를 생성하고 초기 위치를 설정  
+   * - 줌(zoom) 기능 적용  
+   * - `update` 함수를 호출하여 트리 업데이트  
+   */
   const renderTree = (root: d3.HierarchyPointNode<DomNode>) => {
-    const svg = d3.select(svgRef.current as SVGSVGElement);
+    if (!svgRef.current) return;
+    const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
 
     const initialX = svgWidth / 2;
@@ -69,12 +90,19 @@ export default function DomGraph({ data }: DomGraphProps) {
     const g = svg.append('g').attr('transform', `translate(${initialX}, ${initialY})`);
     gRef.current = g.node()!;
 
-
     applyZoom(svg, g);
     update(root, g);
   };
 
-  const applyZoom = (svg: d3.Selection<SVGSVGElement, unknown, null, undefined>, g: d3.Selection<SVGGElement, unknown, null, undefined>) => {
+  /**
+   * 줌(zoom) 기능을 적용하는 함수  
+   * - 마우스 스크롤로 확대/축소 가능  
+   * - 드래그를 통해 트리 이동 가능  
+   */
+  const applyZoom = (
+    svg: d3.Selection<SVGSVGElement, unknown, null, undefined>,
+    g: d3.Selection<SVGGElement, unknown, null, undefined>
+  ) => {
     const zoom = d3.zoom<SVGSVGElement, unknown>()
       .scaleExtent([0.1, 3])
       .on('zoom', (event) => {
@@ -85,6 +113,11 @@ export default function DomGraph({ data }: DomGraphProps) {
     svg.call(zoom.transform, d3.zoomIdentity.translate(svgWidth / 2, 50).scale(1));
   };
 
+  /**
+   * 트리를 업데이트하는 함수  
+   * - 트리 레이아웃을 다시 계산하여 노드 위치 조정  
+   * - 노드와 링크를 업데이트하여 화면에 반영  
+   */
   const update = (source: d3.HierarchyPointNode<DomNode>, g: d3.Selection<SVGGElement, unknown, null, undefined>) => {
     if (!rootRef.current) return;
 
@@ -103,6 +136,11 @@ export default function DomGraph({ data }: DomGraphProps) {
     updateLinks(source, g, links, linkSelection);
   };
 
+  /**
+   * 노드를 업데이트하는 함수  
+   * - 노드를 클릭하면 접고 펼치는 기능 추가  
+   * - 새 노드가 추가될 경우 애니메이션 적용  
+   */
   const updateNodes = (
     source: d3.HierarchyPointNode<DomNode>,
     g: d3.Selection<SVGGElement, unknown, null, undefined>,
@@ -147,38 +185,6 @@ export default function DomGraph({ data }: DomGraphProps) {
       .attr('transform', () => `translate(${source.x},${source.y})`)
       .remove();
   };
-
-  const updateLinks = (
-    source: d3.HierarchyPointNode<DomNode>,
-    g: d3.Selection<SVGGElement, unknown, null, undefined>,
-    links: d3.HierarchyPointLink<DomNode>[],
-    linkSelection: d3.Selection<SVGPathElement, d3.HierarchyPointLink<DomNode>, SVGGElement, unknown>
-  ) => {
-    const link = linkSelection.data(links, (d) => d.target.data.id);
-    const linkEnter = link.enter()
-      .append('path')
-      .attr('class', 'link')
-      .attr('d', (d) => diagonal(source, source))
-      .style('fill', 'none')
-      .style('stroke', '#1E90FF')
-      .style('stroke-width', 2);
-
-    linkEnter.merge(link)
-      .transition().duration(500)
-      .attr('d', (d) => diagonal(d.source, d.target));
-
-    link.exit()
-      .transition().duration(500)
-      .attr('d', (d) => diagonal(source, source))
-      .remove();
-  };
-
-  const diagonal = (s: { x: number; y: number }, d: { x: number; y: number }) => `
-    M ${s.x} ${s.y + 15}
-    C ${(s.x + d.x) / 2} ${s.y + 15},
-      ${(s.x + d.x) / 2} ${d.y - 15},
-      ${d.x} ${d.y - 15}
-  `;
 
   return (
     <div>
