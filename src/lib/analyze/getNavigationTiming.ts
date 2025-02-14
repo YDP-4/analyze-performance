@@ -1,12 +1,24 @@
+"use server";
+
 import { NavigationTiming } from "@/app/types";
 import { Browser } from "puppeteer";
 
+/**
+ * 주어진 URL의 네비게이션 타이밍 데이터를 수집하여 반환
+ * @param {Browser} browser - Puppeteer 브라우저 인스턴스
+ * @param {string} url - 분석할 웹페이지의 URL
+ * @returns {Promise<NavigationTiming>} - 네비게이션 타이밍 데이터
+ */
 export async function getNavigationTiming(browser: Browser, url: string): Promise<NavigationTiming> {
   const page = await browser.newPage();
 
   try {
     await page.goto(url, { waitUntil: "load" });
 
+    /**
+     * 브라우저 내부에서 실행되며, Performance API를 이용해 네비게이션 타이밍 데이터를 수집
+     * @returns {NavigationTiming} - 수집된 네비게이션 타이밍 데이터
+     */
     const navigationTiming = await page.evaluate(() => {
       const entries = performance.getEntriesByType("navigation");
 

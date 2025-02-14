@@ -1,6 +1,7 @@
-export interface AnalyzeResult {
+export type AnalyzeResult = {
   domGraph: DomNode;
   navigationTiming: NavigationTiming;
+  performanceMetrics: PerformanceMetrics;
 }
 
 export type DomNode = {
@@ -10,7 +11,7 @@ export type DomNode = {
 };
 
 
-export interface NavigationTiming {
+export type NavigationTiming = {
   type: string;
   startTime: number;
   duration: number;
@@ -32,6 +33,16 @@ export interface NavigationTiming {
   loadEventEnd: number;
 }
 
+export type PerformanceMetrics = {
+  fmp: number;
+  dcl: number;
+  layoutCount: number;
+  recalcStyleCount: number;
+  scriptExecutionTime: number;
+  resourceCount: number;
+  jsHeapUsedSize: number;
+}
+
 export type TimingDataSubset = Pick<
   NavigationTiming,
   | 'domainLookupStart'
@@ -46,8 +57,10 @@ export type TimingDataSubset = Pick<
   | 'loadEventEnd'
 >;
 
-export interface EventData {
+export type EventData = {
   label: string;
   start: number;
   end: number;
 }
+
+
